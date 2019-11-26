@@ -1,0 +1,54 @@
+<div class="row mt-5">
+  <div class="col-4 ">
+    <form class="navbar-form navbar-left" #f="ngForm" (ngSubmit)="doSearch(f.value)">
+      <div class="row">
+        <div class="form-group col-8">
+          <input type="text" class="form-control" name="motCle" #motCle="ngModel" ngModel placeholder="Search">
+        </div>
+        <div class="col-4 pr-0">
+          <button type="submit" class="btn btn-default">Chercher</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="card car mt-3">
+  <div class="card-header text-center "><h6> Analyses </h6></div>
+  <div class="panel-body">
+    <table class="table">
+      <thead >
+      <tr class="d-flex">
+
+        <th scope="col"  class="col">Nom</th>
+        <th scope="col" class="col">Prix</th>
+        <th scope="col" class="col">Resultat</th>
+        <th scope="col" class="col">Resultat est connu</th>
+        <th scope="col" class="col">Client</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let p of this.catService.analyses" class="d-flex">
+        <td class="col">{{p.nom}}</td>
+        <td class="col">{{p.prix}}</td>
+        <td class="col">{{p.resultat}}</td>
+        <td class="col">{{!p.isResConnu?'Oui':'Non'}}</td>
+        <td class="col">{{p.client.nom}}</td>
+      </tr>
+      </tbody>
+
+
+    </table>
+    <div class="ml-5">
+      <nav>
+        <ul class="pagination">
+          <li [style.display]="this.catService.aboutAnalyses?.pageable.pageNumber == 0 ? 'none' : 'inline'"><a aria-label="Previous " class="page-link clickable" (click)="this.getPage(motCle,(i-1))" ><< Previous</a></li>
+          <li *ngFor="let item of [].constructor(this.catService.aboutAnalyses?.totalPages); let i = index " class="page-item" [ngClass]="{'active' : this.catService.aboutAnalyses?.pageable.pageNumber==i}">
+
+            <a class="page-link clickable"  (click)="this.getPage(motCle,i)" > {{i}} </a>
+          </li>
+          <li [style.display]="this.catService.aboutAnalyses?.pageable.pageNumber == (this.catService.aboutAnalyses?.totalPages-1) ? 'none' : 'inline'"><a class="page-link clickable" aria-label="Previous" (click)="this.getPage(motCle,(i+1))"> Next >></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

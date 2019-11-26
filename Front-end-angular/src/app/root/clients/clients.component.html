@@ -1,0 +1,42 @@
+
+
+<div class="card car mt-5">
+  <div class="card-header text-center "><h6> List des Clients </h6></div>
+  <div class="panel-body">
+    <table class="table">
+      <thead >
+      <tr class="d-flex">
+        <th scope="col"  class="col-3"></th>
+        <th scope="col"  class="col-3">Nom</th>
+        <th scope="col" class="col-3">Prenom</th>
+        <th scope="col" class="col-3"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let c of this.catService.clients" class="d-flex">
+        <td class="col-3"></td>
+        <td class="col-3">{{c.nom}}</td>
+        <td class="col-3">{{c.prenom}}</td>
+        <td class="col-3">
+          <button type="button" (click)="getAnalyses(c.code)" class="btn btn-primary" style="margin-right: 10px">Analyses</button>
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="ml-5">
+      <nav>
+        <ul class="pagination">
+          <li [style.display]="this.catService.aboutClients?.pageable.pageNumber == 0 ? 'none' : 'inline'"><a aria-label="Previous " class="page-link clickable" (click)="this.getPage(motCle,i-1)" ><< Previous</a></li>
+          <li *ngFor="let item of [].constructor(this.catService.aboutClients?.totalPages); let i = index " class="page-item" [ngClass]="{'active' : this.catService.aboutClients?.pageable.pageNumber==i}">
+
+            <a class="page-link clickable"  (click)="this.getPage(motCle,i)" > {{i}} </a>
+          </li>
+          <li [style.display]="this.catService.aboutClients?.pageable.pageNumber == (this.catService.aboutClients?.totalPages-1) ? 'none' : 'inline'"><a class="page-link clickable" aria-label="Previous" (click)="this.getPage(motCle,i+1)"> Next >></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,215 @@
+
+
+<div class="row mt-5">
+  <div class="col-3">
+    <button class="btn btn-lg btn-outline-primary " (click)="openAdd(addAnalyse)">Ajouter Une Analyse</button>
+  </div>
+  <div class="col-4 ">
+    <form class="navbar-form navbar-left" #f="ngForm" (ngSubmit)="doSearch(f.value)">
+       <div class="row">
+         <div class="form-group col-8">
+           <input type="text" class="form-control" name="motCle" #motCle="ngModel" ngModel placeholder="Search">
+         </div>
+         <div class="col-4 pr-0">
+           <button type="submit" class="btn btn-default">Chercher</button>
+         </div>
+       </div>
+    </form>
+  </div>
+</div>
+<div class="card car mt-3">
+  <div class="card-header text-center "><h6> List des Analyses </h6></div>
+  <div class="panel-body">
+    <table class="table">
+      <thead >
+      <tr class="d-flex">
+        <th scope="col-2"  class="col">Nom</th>
+        <th scope="col-2" class="col">Prix</th>
+        <th scope="col-2" class="col">Resultat</th>
+        <th scope="col-2" class="col">Resultat est connu</th>
+        <th scope="col-2" class="col">Client</th>
+        <th scope="col-2" class="col-2"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let p of this.catService.analyses" class="d-flex">
+        <td class="col-2">{{p.nom}}</td>
+        <td class="col-2">{{p.prix}}</td>
+        <td class="col-2">{{p.resultat}}</td>
+        <td class="col-2">{{!p.isResConnu?'Oui':'Non'}}</td>
+        <td class="col-2">{{p.client.nom}}</td>
+        <td class="col-2">
+          <button type="button" (click)="openDelete(deleteAnalyse,p.id)" class="btn btn-primary" style="margin-right: 10px">Delete</button>
+          <button type="button" class="btn btn-primary" (click)="openEdit(editAnalyse,p)">Edit</button>
+
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="ml-5">
+      <nav>
+        <ul class="pagination">
+          <li [style.display]="this.catService.aboutAnalyses?.pageable.pageNumber == 0 ? 'none' : 'inline'"><a aria-label="Previous " class="page-link clickable" (click)="this.getPage(motCle,(i-1))" ><< Previous</a></li>
+          <li *ngFor="let item of [].constructor(this.catService.aboutAnalyses?.totalPages); let i = index " class="page-item" [ngClass]="{'active' : this.catService.aboutAnalyses?.pageable.pageNumber==i}">
+
+            <a class="page-link clickable"  (click)="this.getPage(motCle,i)" > {{i}} </a>
+          </li>
+          <li [style.display]="this.catService.aboutAnalyses?.pageable.pageNumber == (this.catService.aboutAnalyses?.totalPages-1) ? 'none' : 'inline'"><a class="page-link clickable" aria-label="Previous" (click)="this.getPage(motCle,(i+1))"> Next >></a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #addAnalyse let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">Nouveau Analyse</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <form  #formAnalyse="ngForm">
+      <div class="form-group">
+        <label >Name</label>
+        <div class="input-group">
+          <input type="text"  class="form-control" placeholder="Entrer Le nom de analyse" name="nom" [(ngModel)]="this.analyse.nom" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.nom?.errors?.required && formAnalyse.controls?.nom?.touched">Veuillez inserer un Nom valide.</span>
+      </div>
+
+      <div class="form-group">
+        <label >Prix</label>
+        <div class="input-group">
+          <input type="number"  class="form-control" placeholder="Entrer Le Resultat l'analyse" name="prix" [(ngModel)]="this.analyse.isResConnu" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.resultat?.errors?.required && formAnalyse.controls?.resultat?.touched">Veuillez inserer une resultat valide.</span>
+      </div>
+
+      <div class="form-group">
+        <label >Les resultat est connu ?</label>
+        <div class="input-group">
+          <select class="form-control" name="category" [(ngModel)]="this.analyse.isResConnu" required>
+            <option value="">-- Les resultat est connu ? --</option>
+            <option  [ngValue]="true">Oui</option>
+            <option  [ngValue]="false">Non</option>
+          </select>
+        </div>
+
+        <span class="help-block" *ngIf="formAnalyse.controls?.isResConnu?.errors?.required && formAnalyse.controls?.isResConnu?.touched">Les resultat est connu ?.</span>
+      </div>
+
+      <div class="form-group">
+        <label >Resulat</label>
+
+        <div class="input-group">
+          <input type="text"  class="form-control" placeholder="Entrer La Resultat de l'analyse" name="resultat" [(ngModel)]="this.analyse.resultat" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.resultat?.errors?.required && formAnalyse.controls?.resultat?.touched">Veuillez inserer une résultat valide.</span>
+
+      </div>
+
+      <div class="form-group">
+        <label >Client</label>
+        <div class="input-group">
+          <select class="form-control" name="client" [(ngModel)]="this.analyse.client" required>
+            <option value="">-- Veuillez choisir un Client --</option>
+            <option *ngFor="let c of this.catService.listClients"  [ngValue]="c">{{c.nom}}</option>
+          </select>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.idClient?.errors?.required && formAnalyse.controls?.idClient?.touched">Veuillez choisir un Client.</span>
+
+      </div>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()" [disabled]="!formAnalyse.valid">Save</button>
+  </div>
+</ng-template>
+
+<ng-template #editAnalyse let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center">Modifier Produit</h6>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <form  #formAnalyse="ngForm">
+
+      <div class="form-group">
+        <label >Id </label>
+        <div class="input-group">
+          <input type="text" readonly class="form-control"  name="id" [(ngModel)]="this.Analyse.id" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label >Name</label>
+        <div class="input-group">
+          <input type="text"  class="form-control" placeholder="Entrer Le nom du Produit" name="name" [(ngModel)]="this.Analyse.name" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.name?.errors?.required && formAnalyse.controls?.name?.touched">Veuillez inserer un Nom valide.</span>
+      </div>
+
+      <div class="form-group">
+        <label >Description</label>
+        <div class="input-group">
+          <input type="text"  class="form-control" placeholder="Entrer La description du Produit" name="description" [(ngModel)]="this.Analyse.description" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.description?.errors?.required && formAnalyse.controls?.description?.touched">Veuillez inserer une description valide.</span>
+      </div>
+
+      <div class="form-group">
+        <label >Prix</label>
+        <div class="input-group">
+          <input type="number"  class="form-control" placeholder="Entrer Le prix du Produit" name="currentPrice" [(ngModel)]="this.Analyse.currentPrice" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.currentPrice?.errors?.required && formAnalyse.controls?.currentPrice?.touched">Veuillez inserer une Quantité valide.</span>
+      </div>
+
+      <div class="form-group">
+        <label >Quantity</label>
+        <div class="input-group">
+          <input type="number"  class="form-control" placeholder="Entrer La Quantité du Produit" name="quantity" [(ngModel)]="this.Analyse.quantity" required>
+        </div>
+        <span class="help-block" *ngIf="formAnalyse.controls?.quantity?.errors?.required && formAnalyse.controls?.quantity?.touched">Veuillez inserer une Quantité valide.</span>
+
+      </div>
+
+        <div class="form-group">
+          <label >Categorie</label>
+          <div class="input-group">
+            <select class="form-control" name="category" [(ngModel)]="this.Analyse.category" required>
+              <option value="">-- Veuillez choisir une catégorie--</option>
+              <option *ngFor="let c of this.catService.listCategories"  [ngValue]="c">{{c.name}}</option>
+            </select>
+          </div>
+          <span class="help-block" *ngIf="formAnalyse.controls?.idCategorie?.errors?.required && formAnalyse.controls?.idCategorie?.touched">Veuillez choisir une catégorie.</span>
+        </div>
+
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-danger" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close()" [disabled]="!formAnalyse.valid">Modifier</button>
+  </div>
+</ng-template>
+
+<ng-template #deleteAnalyse let-modal>
+<div class="modal-header">
+  <h4 class="modal-title text-center">Ete vous Sur !!!</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="modal.close()">Oui</button>
+  <button type="button" class="btn btn-danger" (click)="modal.dismiss()">Non</button>
+</div>
+</ng-template>
